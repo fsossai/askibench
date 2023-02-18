@@ -1,17 +1,19 @@
 #include <iostream>
+#include <askiplot.hpp>
+#include <cxxopts.hpp>
 
-#include "askiplot/askiplot.hpp"
-#include "cxxopts.hpp"
+#include "version.h"
 
-#define ASKIPLOT_CMDLINE_VERSION_MAJOR 0
-#define ASKIPLOT_CMDLINE_VERSION_MINOR 1
+#define ASKIBENCH_VERSION_MAJOR 0
+#define ASKIBENCH_VERSION_MINOR 1
+#define ASKIBENCH_VERSION_PATCH 0
 
 using namespace std;
 
 void print_version();
 
 int main(int argc, char *argv[]) {
-  cxxopts::Options options("askiplot", "AskiPlot - Lightweight ASCII plotter");
+  cxxopts::Options options("askibench", "askibench - Benchmark results directly in your console with ASCII characters");
   options.add_options()
     ("t,tab", "Set TAB as the CSV delimiter")
     ("d,delimiter", "Set a specific char as CSV delimiter.", cxxopts::value<char>())
@@ -57,15 +59,18 @@ int main(int argc, char *argv[]) {
 
 void print_version() {
   cout <<
-    "AskiPlot\n"
-    "Library version: " <<
-    to_string(ASKIPLOT_VERSION_MAJOR) << "." <<
-    to_string(ASKIPLOT_VERSION_MINOR) << "." <<
-    to_string(ASKIPLOT_VERSION_PATCH) << "\n" <<
-    "Command-line tool version: " << 
-    to_string(ASKIPLOT_CMDLINE_VERSION_MAJOR) << "." <<
-    to_string(ASKIPLOT_CMDLINE_VERSION_MINOR) << "\n" <<
-    "Repository: https://github.com/fsossai/AskiPlot\n"
+    "askibench version " <<
+    to_string(ASKIBENCH_VERSION_MAJOR) << "." <<
+    to_string(ASKIBENCH_VERSION_MINOR) << "." <<
+    to_string(ASKIBENCH_VERSION_PATCH) << " (" <<
+    ASKIBENCH_REPOSITORY_REMOTE << " @ " <<
+    ASKIBENCH_REPOSITORY_COMMIT << ")\n" <<
+    "askiplot version " <<
+    to_string(askiplot::ASKIPLOT_VERSION_MAJOR) << "." <<
+    to_string(askiplot::ASKIPLOT_VERSION_MINOR) << "." <<
+    to_string(askiplot::ASKIPLOT_VERSION_PATCH) << " (" <<
+    ASKIPLOT_REPOSITORY_REMOTE << " @ " <<
+    ASKIPLOT_REPOSITORY_COMMIT << ")\n" <<
     "This is free software; see the source for copying conditions.  There is NO\n"
     "warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE." <<
     endl;
