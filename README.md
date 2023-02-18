@@ -3,11 +3,4 @@
 It relies on the [AskiPlot](https://github.com/fsossai/AskiPlot) library to generate the
 output.
 
-```
-git submodule update --init
-mkdir build
-cd build
-cmake ..
-make
-```
-
+Run `make` to compile.
