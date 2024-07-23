@@ -17,4 +17,8 @@ configure_file(version.hpp.in version.hpp)
 target_include_directories(askibench PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 target_include_directories(askibench PUBLIC ${CMAKE_CURRENT_BINARY_DIR})
 
-install(DIRECTORY askibench DESTINATION include)
+install(
+  DIRECTORY askibench
+  DESTINATION include
+  FILES_MATCHING PATTERN "*.hpp"
+)
