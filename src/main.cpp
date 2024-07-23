@@ -63,9 +63,9 @@ void printVersion() {
     ASKIBENCH_REPOSITORY_ORIGIN << " @ " <<
     ASKIBENCH_REPOSITORY_COMMIT << ")\n" <<
     "askiplot version " <<
-    to_string(askiplot::ASKIPLOT_VERSION_MAJOR) << "." <<
-    to_string(askiplot::ASKIPLOT_VERSION_MINOR) << "." <<
-    to_string(askiplot::ASKIPLOT_VERSION_PATCH) << "\n"
+    to_string(askiplot::version.major) << "." <<
+    to_string(askiplot::version.minor) << "." <<
+    to_string(askiplot::version.patch) << "\n"
     "cxxopts version " <<
     to_string(cxxopts::version.major) << "." <<
     to_string(cxxopts::version.minor) << "." <<
