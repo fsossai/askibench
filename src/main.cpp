@@ -14,6 +14,9 @@ void printVersion();
 
 int main(int argc, char *argv[]) {
   cxxopts::Options options("askibench", "askibench - Benchmark results directly in your console with ASCII characters");
+  options.allow_unrecognised_options();
+  options.show_positional_help();
+  options.custom_help("[OPTION...] FILE...");
   options.add_options()
     ("t,tab", "Set TAB as the CSV delimiter")
     ("d,delimiter", "Set a specific char as CSV delimiter.", cxxopts::value<char>())
@@ -41,11 +44,9 @@ int main(int argc, char *argv[]) {
     if (filenames.size() == 0) {
       // TODO Assuming stdin as input
     } else if (filenames.size() > 1) {
-      // Too many files names provided
       cerr <<
         "WARNING: More than one file name provided. "
         "Ignoring all except '" << filenames[0] << "'" << endl;
-    } else {
     }
   }
   catch (const exception& e) {
