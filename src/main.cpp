@@ -2,7 +2,7 @@
 #include <askiplot.hpp>
 #include <cxxopts.hpp>
 
-#include "version.h"
+#include "version.hpp"
 
 #define ASKIBENCH_VERSION_MAJOR 0
 #define ASKIBENCH_VERSION_MINOR 1
@@ -10,7 +10,7 @@
 
 using namespace std;
 
-void print_version();
+void printVersion();
 
 int main(int argc, char *argv[]) {
   cxxopts::Options options("askibench", "askibench - Benchmark results directly in your console with ASCII characters");
@@ -23,7 +23,7 @@ int main(int argc, char *argv[]) {
     ("brush-area","Set the character to be used for filling bars, or the area under curves.", cxxopts::value<char>()->default_value(askiplot::DefaultBrushArea))
     ("brush-empty","Set the character to be used as background filler.", cxxopts::value<char>()->default_value(askiplot::DefaultBrushBlank))
     ("f,fill","Fill area under the curve. Use option --brush-area to set a custom char.")
-    ("V,version","Display software version.")
+    ("v,version","Display software version.")
     ("h,help","Display this help message.")
   ;
 
@@ -34,7 +34,7 @@ int main(int argc, char *argv[]) {
       return 0;
     }
     if (args.count("version")) {
-      print_version();
+      printVersion();
       return 0;
     }
     auto filenames = args.unmatched();
@@ -57,20 +57,18 @@ int main(int argc, char *argv[]) {
   return 0;
 }
 
-void print_version() {
+void printVersion() {
   cout <<
     "askibench version " <<
     to_string(ASKIBENCH_VERSION_MAJOR) << "." <<
     to_string(ASKIBENCH_VERSION_MINOR) << "." <<
     to_string(ASKIBENCH_VERSION_PATCH) << " (" <<
-    ASKIBENCH_REPOSITORY_REMOTE << " @ " <<
+    ASKIBENCH_REPOSITORY_ORIGIN << " @ " <<
     ASKIBENCH_REPOSITORY_COMMIT << ")\n" <<
     "askiplot version " <<
     to_string(askiplot::ASKIPLOT_VERSION_MAJOR) << "." <<
     to_string(askiplot::ASKIPLOT_VERSION_MINOR) << "." <<
     to_string(askiplot::ASKIPLOT_VERSION_PATCH) << " (" <<
-    ASKIPLOT_REPOSITORY_REMOTE << " @ " <<
-    ASKIPLOT_REPOSITORY_COMMIT << ")\n" <<
     "This is free software; see the source for copying conditions.  There is NO\n"
     "warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE." <<
     endl;
