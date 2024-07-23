@@ -1,2 +1,14 @@
+#include <cstdint>
+
 #cmakedefine ASKIBENCH_REPOSITORY_ORIGIN "@ASKIBENCH_REPOSITORY_ORIGIN@"
 #cmakedefine ASKIBENCH_REPOSITORY_COMMIT "@ASKIBENCH_REPOSITORY_COMMIT@"
+
+namespace askibench {
+
+static constexpr struct {
+  uint8_t major, minor, patch;
+} version = {
+  0, 1, 0
+};
+
+} // namespace askibench

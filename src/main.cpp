@@ -4,10 +4,6 @@
 
 #include "version.hpp"
 
-#define ASKIBENCH_VERSION_MAJOR 0
-#define ASKIBENCH_VERSION_MINOR 1
-#define ASKIBENCH_VERSION_PATCH 0
-
 using namespace std;
 
 void printVersion();
@@ -61,13 +57,17 @@ int main(int argc, char *argv[]) {
 void printVersion() {
   cout <<
     "askibench version " <<
-    to_string(ASKIBENCH_VERSION_MAJOR) << "." <<
-    to_string(ASKIBENCH_VERSION_MINOR) << "." <<
-    to_string(ASKIBENCH_VERSION_PATCH) << " (" <<
+    to_string(askibench::version.major) << "." <<
+    to_string(askibench::version.minor) << "." <<
+    to_string(askibench::version.patch) << " (" <<
     ASKIBENCH_REPOSITORY_ORIGIN << " @ " <<
     ASKIBENCH_REPOSITORY_COMMIT << ")\n" <<
     "askiplot version " <<
     to_string(askiplot::ASKIPLOT_VERSION_MAJOR) << "." <<
     to_string(askiplot::ASKIPLOT_VERSION_MINOR) << "." <<
-    to_string(askiplot::ASKIPLOT_VERSION_PATCH) << "\n";
+    to_string(askiplot::ASKIPLOT_VERSION_PATCH) << "\n"
+    "cxxopts version " <<
+    to_string(cxxopts::version.major) << "." <<
+    to_string(cxxopts::version.minor) << "." <<
+    to_string(cxxopts::version.patch) << "\n";
 }
