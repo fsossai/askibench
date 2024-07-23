@@ -68,8 +68,5 @@ void printVersion() {
     "askiplot version " <<
     to_string(askiplot::ASKIPLOT_VERSION_MAJOR) << "." <<
     to_string(askiplot::ASKIPLOT_VERSION_MINOR) << "." <<
-    to_string(askiplot::ASKIPLOT_VERSION_PATCH) << " (" <<
-    "This is free software; see the source for copying conditions.  There is NO\n"
-    "warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE." <<
-    endl;
+    to_string(askiplot::ASKIPLOT_VERSION_PATCH) << "\n";
 }
