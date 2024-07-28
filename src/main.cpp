@@ -1,9 +1,9 @@
-#include <iostream>
 #include <askiplot.hpp>
 #include <cxxopts.hpp>
+#include <iostream>
 
-#include "version.hpp"
 #include "askibench/benchmark.hpp"
+#include "version.hpp"
 
 using namespace std;
 using namespace askiplot;
@@ -11,6 +11,7 @@ using namespace askiplot;
 void printVersion();
 
 int main(int argc, char *argv[]) {
+  // clang-format off
   cxxopts::Options options("askibench", "askibench - Benchmark results directly in your console with ASCII characters");
   options.allow_unrecognised_options();
   options.show_positional_help();
@@ -25,6 +26,7 @@ int main(int argc, char *argv[]) {
     ("v,version","Display software version.")
     ("h,help","Display this help message.")
   ;
+  // clang-format on
 
   try {
     auto args = options.parse(argc, argv);
@@ -53,7 +55,7 @@ int main(int argc, char *argv[]) {
       barPlot.DrawLegend(East).DrawBarLabels(Offset(0, 1));
       cout << barPlot.Serialize();
     }
-  } catch (const exception& e) {
+  } catch (const exception &e) {
     cout << "ERROR: ";
     cout << e.what() << endl;
     return 1;
@@ -63,19 +65,17 @@ int main(int argc, char *argv[]) {
 }
 
 void printVersion() {
-  cout <<
-    "askibench version " <<
-    to_string(askibench::version.major) << "." <<
-    to_string(askibench::version.minor) << "." <<
-    to_string(askibench::version.patch) << " (" <<
-    ASKIBENCH_REPOSITORY_ORIGIN << " @ " <<
-    ASKIBENCH_REPOSITORY_COMMIT << ")\n" <<
-    "askiplot version " <<
-    to_string(askiplot::version.major) << "." <<
-    to_string(askiplot::version.minor) << "." <<
-    to_string(askiplot::version.patch) << "\n"
-    "cxxopts version " <<
-    to_string(cxxopts::version.major) << "." <<
-    to_string(cxxopts::version.minor) << "." <<
-    to_string(cxxopts::version.patch) << "\n";
+  cout << "askibench version " << to_string(askibench::version.major) << "."
+       << to_string(askibench::version.minor) << "."
+       << to_string(askibench::version.patch) << " ("
+       << ASKIBENCH_REPOSITORY_ORIGIN << " @ " << ASKIBENCH_REPOSITORY_COMMIT
+       << ")\n"
+       << "askiplot version " << to_string(askiplot::version.major) << "."
+       << to_string(askiplot::version.minor) << "."
+       << to_string(askiplot::version.patch)
+       << "\n"
+          "cxxopts version "
+       << to_string(cxxopts::version.major) << "."
+       << to_string(cxxopts::version.minor) << "."
+       << to_string(cxxopts::version.patch) << "\n";
 }
