@@ -3,8 +3,10 @@
 #include <cxxopts.hpp>
 
 #include "version.hpp"
+#include "askibench/benchmark.hpp"
 
 using namespace std;
+using namespace askiplot;
 
 void printVersion();
 
@@ -18,9 +20,7 @@ int main(int argc, char *argv[]) {
     ("d,delimiter", "Set a specific char as CSV delimiter.", cxxopts::value<char>())
     ("W,width","Canvas maximum width. Assuming the width of the current console as default value.", cxxopts::value<int>())
     ("H,height","Canvas maximum width. Assuming the height of the current console as default value.", cxxopts::value<int>())
-    ("brush-line","Set the character to be used for drawing lines.", cxxopts::value<char>()->default_value(askiplot::DefaultBrushMain))
     ("brush-area","Set the character to be used for filling bars, or the area under curves.", cxxopts::value<char>()->default_value(askiplot::DefaultBrushArea))
-    ("brush-empty","Set the character to be used as background filler.", cxxopts::value<char>()->default_value(askiplot::DefaultBrushBlank))
     ("f,fill","Fill area under the curve. Use option --brush-area to set a custom char.")
     ("v,version","Display software version.")
     ("h,help","Display this help message.")
@@ -37,15 +37,23 @@ int main(int argc, char *argv[]) {
       return 0;
     }
     auto filenames = args.unmatched();
-    if (filenames.size() == 0) {
-      // TODO Assuming stdin as input
-    } else if (filenames.size() > 1) {
-      cerr <<
-        "WARNING: More than one file name provided. "
-        "Ignoring all except '" << filenames[0] << "'" << endl;
+    if (filenames.size() != 0) {
+      BarPlot barPlot;
+      auto numGroups = filenames.size();
+      auto barGrouper = BarGrouper(barPlot);
+
+      for (auto filename : filenames) {
+        auto benchmark = askibench::parseBenchmark(filename);
+        auto medians = benchmark.medians();
+        auto numThreads = benchmark.getNumThreads();
+        barGrouper.Add(medians.flatten(), benchmark.getName());
+      }
+
+      barGrouper.Commit();
+      barPlot.DrawLegend(East).DrawBarLabels(Offset(0, 1));
+      cout << barPlot.Serialize();
     }
-  }
-  catch (const exception& e) {
+  } catch (const exception& e) {
     cout << "ERROR: ";
     cout << e.what() << endl;
     return 1;
