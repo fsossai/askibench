@@ -63,7 +63,7 @@ int main(int argc, char *argv[]) {
 
       // creating bar group names
       vector<string> groupNames;
-      for (const auto& x : threadNums) {
+      for (const auto &x : threadNums) {
         groupNames.push_back("threads=" + to_string((int)x));
       }
 
