@@ -80,4 +80,8 @@ Benchmark parseBenchmark(const string &inputFile) {
   return benchmark;
 }
 
+size_t Benchmark::size() const {
+  return threadsToTimes_.size();
+}
+
 } // namespace askibench

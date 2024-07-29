@@ -18,6 +18,7 @@ public:
   std::string getName() const;
   std::vector<benchmark_threads_t> getNumThreads() const;
   std::vector<benchmark_time_t> flatten() const;
+  size_t size() const;
 };
 
 Benchmark parseBenchmark(const std::string& inputFile);
