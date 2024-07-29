@@ -2,7 +2,7 @@ BUILD_DIR ?= build
 export GENERATOR ?= Unix Makefiles
 export JOBS ?= 8
 export MAKEFLAGS += --no-print-directory
-export CMAKE_INSTALL_PREFIX ?= install
+export INSTALL_DIR ?= install
 export CMAKE_BUILD_TYPE=Release
 
 all: compile
@@ -16,7 +16,7 @@ compile: build
 
 build:
 	cmake -S . -B $(BUILD_DIR) -G "$(GENERATOR)" \
-		-DCMAKE_INSTALL_PREFIX=$(CMAKE_INSTALL_PREFIX)
+		-DCMAKE_INSTALL_PREFIX=$(INSTALL_DIR)
 
 format:
 	find ./src -regex '.*\.[c|h]pp' | xargs clang-format -i

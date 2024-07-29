@@ -81,7 +81,7 @@ int main(int argc, char *argv[]) {
 
       barGrouper.SetGroupNames(groupNames);
       barGrouper.Commit();
-      barPlot.DrawLegend(East).DrawBarLabels(Offset(0, 1));
+      barPlot.DrawLegend(NorthEast).DrawBarLabels(Offset(0, 1));
       cout << barPlot.Serialize();
     }
   } catch (const exception &e) {
