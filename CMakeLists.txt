@@ -17,6 +17,8 @@ add_custom_target(
 
 add_executable(askibench)
 
+target_compile_options(askibench PRIVATE -Wall -Wpedantic -Wextra)
+
 add_subdirectory(third_party)
 add_subdirectory(include)
 add_subdirectory(src)
