@@ -28,11 +28,10 @@ int main(int argc, char *argv[]) {
   ;
   // clang-format on
 
-
   try {
     auto args = options.parse(argc, argv);
     askiplot::BarValuePrecision = 0;
-    if (args.count("speedup")) { 
+    if (args.count("speedup")) {
       askiplot::BarValuePrecision = 2;
     }
     if (args.count("help")) {
@@ -53,16 +52,9 @@ int main(int argc, char *argv[]) {
     }
 
     auto filenames = args.unmatched();
-    vector<benchmark_threads_t> threadNums;
     if (filenames.size() != 0) {
       BarPlot barPlot(plot_width, plot_height);
-      barPlot
-        .DrawBorders(Top)
-        .SetTitle(" AskiBench ")
-        .DrawTitle();
-
-      auto numGroups = filenames.size();
-      auto barGrouper = BarGrouper(barPlot);
+      barPlot.DrawBorders(Top).SetTitle(" AskiBench ").DrawTitle();
 
       benchmark_time_t baseline;
       if (args.count("speedup")) {
@@ -70,15 +62,19 @@ int main(int argc, char *argv[]) {
         auto benchmark = askibench::parseBenchmark(file);
         auto medians = benchmark.medians();
         if (medians.size() > 1) {
-          throw invalid_argument("baseline for speedup has more than one configuration");
+          throw invalid_argument(
+              "baseline for speedup has more than one configuration");
         }
         baseline = medians.flatten()[0];
       }
 
+      vector<benchmark_threads_t> threadNums;
+      auto barGrouper = BarGrouper(barPlot);
       for (auto filename : filenames) {
         auto benchmark = askibench::parseBenchmark(filename);
         auto tn = benchmark.getNumThreads();
 
+        // looking for the highest number of bar groups
         if (tn.size() > threadNums.size()) {
           threadNums = std::move(tn);
         }
@@ -100,9 +96,7 @@ int main(int argc, char *argv[]) {
       }
 
       barGrouper.SetGroupNames(groupNames).Commit();
-      barPlot
-        .DrawBarLabels(Offset(0, 1))
-        .DrawLegend(NorthEast);
+      barPlot.DrawBarLabels(Offset(0, 1)).DrawLegend(NorthEast);
       cout << barPlot.Serialize();
     }
   } catch (const exception &e) {

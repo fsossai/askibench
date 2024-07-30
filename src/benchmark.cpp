@@ -9,7 +9,7 @@ using namespace std;
 namespace askibench {
 
 void Benchmark::print() const {
-  for (const auto &[threads, times] : threadsToTimes_) {
+  for (const auto &[threads, times] : getData()) {
     cout << name_ << "."
          << "threads." << threads << " = [\n";
     for (auto t : times) {
@@ -22,7 +22,7 @@ void Benchmark::print() const {
 Benchmark Benchmark::medians() const {
   Benchmark medians = *this;
 
-  for (auto& [threads, times] : medians.threadsToTimes_) {
+  for (auto &[threads, times] : medians.threadsToTimes_) {
     std::sort(times.begin(), times.end());
     auto mid = times.size() / 2LL;
 
@@ -32,7 +32,7 @@ Benchmark Benchmark::medians() const {
     } else {
       median = times[mid];
     }
-    medians.threadsToTimes_[threads] = { median };
+    medians[threads] = {median};
   }
   return medians;
 }
@@ -40,32 +40,30 @@ Benchmark Benchmark::medians() const {
 Benchmark Benchmark::geomeans() const {
   Benchmark geomeans;
 
-  for (const auto& [threads, times] : threadsToTimes_) {
+  for (const auto &[threads, times] : getData()) {
     benchmark_time_t accumulator = 1;
     for (const auto &time : times) {
       accumulator *= time;
     }
     auto geomean = pow(accumulator, 1. / times.size());
-    geomeans.threadsToTimes_[threads] = { geomean };
+    geomeans[threads] = {geomean};
   }
   return geomeans;
 }
 
 Benchmark Benchmark::speedups(benchmark_time_t baseline) const {
   Benchmark speedup;
-  for (const auto& [threads, times] : threadsToTimes_) {
-    for (const auto& time : times) {
-      speedup.threadsToTimes_[threads].push_back(baseline / time);
+  for (const auto &[threads, times] : getData()) {
+    for (const auto &time : times) {
+      speedup[threads].push_back(baseline / time);
     }
   }
   return speedup;
 }
 
-string Benchmark::getName() const { return name_; }
-
 vector<benchmark_threads_t> Benchmark::getNumThreads() const {
   vector<benchmark_threads_t> numThreads;
-  for (const auto &[threads, _] : threadsToTimes_) {
+  for (const auto &[threads, _] : getData()) {
     numThreads.push_back(threads);
   }
   return numThreads;
@@ -73,7 +71,7 @@ vector<benchmark_threads_t> Benchmark::getNumThreads() const {
 
 vector<benchmark_time_t> Benchmark::flatten() const {
   vector<benchmark_time_t> result;
-  for (const auto &[threads, times] : threadsToTimes_) {
+  for (const auto &[threads, times] : getData()) {
     for (auto t : times) {
       result.push_back(t);
     }
@@ -81,15 +79,19 @@ vector<benchmark_time_t> Benchmark::flatten() const {
   return result;
 }
 
+void Benchmark::setName(string name) { name_ = name; }
+
+string Benchmark::getName() const { return name_; }
+
 Benchmark parseBenchmark(const string &inputFile) {
   Benchmark benchmark;
 
   // trim extension if present
   size_t lastDot = inputFile.find_last_of(".");
   if (lastDot == string::npos) {
-    benchmark.name_ = inputFile;
+    benchmark.setName(inputFile);
   } else {
-    benchmark.name_ = inputFile.substr(0, lastDot);
+    benchmark.setName(inputFile.substr(0, lastDot));
   }
 
   io::CSVReader<2> in(inputFile.c_str());
@@ -98,12 +100,23 @@ Benchmark parseBenchmark(const string &inputFile) {
   benchmark_time_t time;
 
   while (in.read_row(threads, time)) {
-    benchmark.threadsToTimes_[threads].push_back(time);
+    benchmark[threads].push_back(time);
   }
 
   return benchmark;
 }
 
-size_t Benchmark::size() const { return threadsToTimes_.size(); }
+size_t Benchmark::size() const { return getData().size(); }
+
+const benchmark_data_t &Benchmark::getData() const { return threadsToTimes_; }
+
+vector<benchmark_time_t> &Benchmark::operator[](benchmark_threads_t threads) {
+  return threadsToTimes_[threads];
+}
+
+const std::vector<benchmark_time_t> &
+Benchmark::operator[](benchmark_threads_t threads) const {
+  return threadsToTimes_.at(threads);
+}
 
 } // namespace askibench
