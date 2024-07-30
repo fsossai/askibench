@@ -1,3 +1,4 @@
+#include <cmath>
 #include <csv.h>
 #include <iostream>
 
@@ -21,7 +22,7 @@ void Benchmark::print() const {
 Benchmark Benchmark::medians() const {
   Benchmark medians = *this;
 
-  for (auto [threads, times] : threadsToTimes_) {
+  for (auto& [threads, times] : medians.threadsToTimes_) {
     std::sort(times.begin(), times.end());
     auto mid = times.size() / 2LL;
 
@@ -31,10 +32,33 @@ Benchmark Benchmark::medians() const {
     } else {
       median = times[mid];
     }
-    medians.threadsToTimes_[threads] = {median};
+    medians.threadsToTimes_[threads] = { median };
   }
-
   return medians;
+}
+
+Benchmark Benchmark::geomeans() const {
+  Benchmark geomeans;
+
+  for (const auto& [threads, times] : threadsToTimes_) {
+    benchmark_time_t accumulator = 1;
+    for (const auto &time : times) {
+      accumulator *= time;
+    }
+    auto geomean = pow(accumulator, 1. / times.size());
+    geomeans.threadsToTimes_[threads] = { geomean };
+  }
+  return geomeans;
+}
+
+Benchmark Benchmark::speedups(benchmark_time_t baseline) const {
+  Benchmark speedup;
+  for (const auto& [threads, times] : threadsToTimes_) {
+    for (const auto& time : times) {
+      speedup.threadsToTimes_[threads].push_back(baseline / time);
+    }
+  }
+  return speedup;
 }
 
 string Benchmark::getName() const { return name_; }

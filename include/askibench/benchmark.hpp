@@ -15,6 +15,8 @@ public:
 
   void print() const;
   Benchmark medians() const;
+  Benchmark geomeans() const;
+  Benchmark speedups(benchmark_time_t baseline) const;
   std::string getName() const;
   std::vector<benchmark_threads_t> getNumThreads() const;
   std::vector<benchmark_time_t> flatten() const;

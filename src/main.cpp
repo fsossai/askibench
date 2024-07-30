@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <askiplot.hpp>
 #include <cxxopts.hpp>
 #include <iostream>
@@ -18,20 +19,22 @@ int main(int argc, char *argv[]) {
   options.show_positional_help();
   options.custom_help("[OPTION...] FILE...");
   options.add_options()
-    ("t,tab", "Set TAB as the CSV delimiter")
-    ("d,delimiter", "Set a specific char as CSV delimiter.", cxxopts::value<char>())
     ("W,width","Canvas maximum width. Assuming the width of the current console as default value.", cxxopts::value<int>())
     ("H,height","Canvas maximum width. Assuming the height of the current console as default value.", cxxopts::value<int>())
-    ("brush-area","Set the character to be used for filling bars, or the area under curves.", cxxopts::value<char>()->default_value(askiplot::DefaultBrushArea))
-    ("f,fill","Fill area under the curve. Use option --brush-area to set a custom char.")
     ("b,baseline","Set a baseline", cxxopts::value<string>())
+    ("s,speedup","Specify a file to use as a baseline for computing seepdups", cxxopts::value<string>())
     ("v,version","Display software version.")
     ("h,help","Display this help message.")
   ;
   // clang-format on
 
+
   try {
     auto args = options.parse(argc, argv);
+    askiplot::BarValuePrecision = 0;
+    if (args.count("speedup")) { 
+      askiplot::BarValuePrecision = 2;
+    }
     if (args.count("help")) {
       cout << options.help() << endl;
       return 0;
@@ -40,13 +43,37 @@ int main(int argc, char *argv[]) {
       printVersion();
       return 0;
     }
+    int plot_width = 0;
+    if (args.count("width")) {
+      plot_width = std::max(0, args["width"].as<int>());
+    }
+    int plot_height = 0;
+    if (args.count("height")) {
+      plot_height = std::max(0, args["height"].as<int>());
+    }
 
     auto filenames = args.unmatched();
     vector<benchmark_threads_t> threadNums;
     if (filenames.size() != 0) {
-      BarPlot barPlot;
+      BarPlot barPlot(plot_width, plot_height);
+      barPlot
+        .DrawBorders(Top)
+        .SetTitle(" AskiBench ")
+        .DrawTitle();
+
       auto numGroups = filenames.size();
       auto barGrouper = BarGrouper(barPlot);
+
+      benchmark_time_t baseline;
+      if (args.count("speedup")) {
+        auto file = args["speedup"].as<string>();
+        auto benchmark = askibench::parseBenchmark(file);
+        auto medians = benchmark.medians();
+        if (medians.size() > 1) {
+          throw invalid_argument("baseline for speedup has more than one configuration");
+        }
+        baseline = medians.flatten()[0];
+      }
 
       for (auto filename : filenames) {
         auto benchmark = askibench::parseBenchmark(filename);
@@ -56,9 +83,14 @@ int main(int argc, char *argv[]) {
           threadNums = std::move(tn);
         }
 
-        auto medians = benchmark.medians();
-        auto numThreads = benchmark.getNumThreads();
-        barGrouper.Add(medians.flatten(), benchmark.getName());
+        Benchmark data;
+        if (args.count("speedup")) {
+          data = benchmark.speedups(baseline).geomeans();
+          cout << "\n";
+        } else {
+          data = benchmark.medians();
+        }
+        barGrouper.Add(data.flatten(), benchmark.getName());
       }
 
       // creating bar group names
@@ -67,21 +99,10 @@ int main(int argc, char *argv[]) {
         groupNames.push_back("threads=" + to_string((int)x));
       }
 
-      // drawing baseling
-      if (args.count("baseline")) {
-        auto baseline = args["baseline"].as<string>();
-        auto benchmark = askibench::parseBenchmark(baseline);
-        auto medians = benchmark.medians();
-        if (medians.size() > 1) {
-          throw invalid_argument("baseline has more than one configuration");
-        }
-        auto baselineTime = medians.flatten()[0];
-        barPlot.DrawLineHorizontalAtY(baselineTime);
-      }
-
-      barGrouper.SetGroupNames(groupNames);
-      barGrouper.Commit();
-      barPlot.DrawLegend(NorthEast).DrawBarLabels(Offset(0, 1));
+      barGrouper.SetGroupNames(groupNames).Commit();
+      barPlot
+        .DrawBarLabels(Offset(0, 1))
+        .DrawLegend(NorthEast);
       cout << barPlot.Serialize();
     }
   } catch (const exception &e) {
