@@ -5,7 +5,7 @@
 
 namespace askibench {
 
-using benchmark_threads_t = double;
+using benchmark_threads_t = int;
 using benchmark_time_t = double;
 using benchmark_data_t = std::map<benchmark_threads_t, std::vector<benchmark_time_t>>;
 
@@ -33,6 +33,7 @@ public:
   const std::vector<benchmark_time_t>& operator[](benchmark_threads_t threads) const;
 
   void print() const;
+  bool contains(benchmark_threads_t threads) const;
 
 
 private:

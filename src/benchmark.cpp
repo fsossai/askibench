@@ -108,6 +108,10 @@ Benchmark parseBenchmark(const string &inputFile) {
 
 size_t Benchmark::size() const { return getData().size(); }
 
+bool Benchmark::contains(benchmark_threads_t threads) const {
+  return threadsToTimes_.find(threads) != threadsToTimes_.end();
+}
+
 const benchmark_data_t &Benchmark::getData() const { return threadsToTimes_; }
 
 vector<benchmark_time_t> &Benchmark::operator[](benchmark_threads_t threads) {

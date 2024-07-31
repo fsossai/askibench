@@ -61,11 +61,20 @@ int main(int argc, char *argv[]) {
         auto file = args["speedup"].as<string>();
         auto benchmark = askibench::parseBenchmark(file);
         auto geomeans = benchmark.geomeans();
-        if (geomeans.size() > 1) {
-          throw invalid_argument(
-              "baseline for speedup has more than one configuration");
+
+        // Finding a baseline.
+        // The provided file must contain either the threads=1 configuration
+        // or a unique configuration
+        if (geomeans.contains(1)) {
+          baseline = geomeans[1][0];
+        } else {
+          if (geomeans.size() > 1) {
+            throw invalid_argument(
+                "baseline for speedup has ambiguous configuration");
+          } else {
+            baseline = geomeans.flatten()[0];
+          }
         }
-        baseline = geomeans.flatten()[0];
       }
 
       vector<benchmark_threads_t> threadNums;
@@ -74,7 +83,7 @@ int main(int argc, char *argv[]) {
         auto benchmark = askibench::parseBenchmark(filename);
         auto tn = benchmark.getNumThreads();
 
-        // looking for the highest number of bar groups
+        // Looking for the highest number of bar groups
         if (tn.size() > threadNums.size()) {
           threadNums = std::move(tn);
         }
@@ -88,7 +97,7 @@ int main(int argc, char *argv[]) {
         barGrouper.Add(data.flatten(), benchmark.getName());
       }
 
-      // creating bar group names
+      // Creating bar group names
       vector<string> groupNames;
       for (const auto &x : threadNums) {
         groupNames.push_back("threads=" + to_string((int)x));
