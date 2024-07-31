@@ -15,32 +15,32 @@ public:
   ~Benchmark() = default;
 
   // getters
-  const benchmark_data_t& getData() const;
-  std::string getName() const;
-  size_t size() const;
-  std::vector<benchmark_threads_t> getNumThreads() const;
+  const benchmark_data_t& GetData() const;
+  std::string GetName() const;
+  size_t GetSize() const;
+  std::vector<benchmark_threads_t> GetThreadNumbers() const;
 
   // setters
-  void setName(std::string name);
+  void SetName(std::string name);
 
-  Benchmark geomeans() const;
-  Benchmark medians() const;
-  Benchmark speedups(benchmark_time_t baseline) const;
-  std::vector<benchmark_time_t> flatten() const;
+  Benchmark Geomeans() const;
+  Benchmark Medians() const;
+  Benchmark Speedups(benchmark_time_t baseline) const;
+  std::vector<benchmark_time_t> Flatten() const;
 
   // operators
   std::vector<benchmark_time_t>& operator[](benchmark_threads_t threads);
   const std::vector<benchmark_time_t>& operator[](benchmark_threads_t threads) const;
 
-  void print() const;
-  bool contains(benchmark_threads_t threads) const;
+  void Print() const;
+  bool Contains(benchmark_threads_t threads) const;
 
 
 private:
-  benchmark_data_t threadsToTimes_;
+  benchmark_data_t threads_to_times_;
   std::string name_;
 };
 
-Benchmark parseBenchmark(const std::string& inputFile);
+Benchmark ParseBenchmark(const std::string& inputFile);
 
 } // namespace askibench

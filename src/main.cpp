@@ -10,7 +10,7 @@ using namespace std;
 using namespace askiplot;
 using namespace askibench;
 
-void printVersion();
+void PrintVersion();
 
 int main(int argc, char *argv[]) {
   // clang-format off
@@ -39,7 +39,7 @@ int main(int argc, char *argv[]) {
       return 0;
     }
     if (args.count("version")) {
-      printVersion();
+      PrintVersion();
       return 0;
     }
     int plot_width = 0;
@@ -53,59 +53,59 @@ int main(int argc, char *argv[]) {
 
     auto filenames = args.unmatched();
     if (filenames.size() != 0) {
-      BarPlot barPlot(plot_width, plot_height);
-      barPlot.DrawBorders(Top).SetTitle(" AskiBench ").DrawTitle();
+      BarPlot plot(plot_width, plot_height);
+      plot.DrawBorders(Top).SetTitle(" AskiBench ").DrawTitle();
 
       benchmark_time_t baseline;
       if (args.count("speedup")) {
         auto file = args["speedup"].as<string>();
-        auto benchmark = askibench::parseBenchmark(file);
-        auto geomeans = benchmark.geomeans();
+        auto benchmark = askibench::ParseBenchmark(file);
+        auto geomeans = benchmark.Geomeans();
 
         // Finding a baseline.
         // The provided file must contain either the threads=1 configuration
         // or a unique configuration
-        if (geomeans.contains(1)) {
+        if (geomeans.Contains(1)) {
           baseline = geomeans[1][0];
         } else {
-          if (geomeans.size() > 1) {
+          if (geomeans.GetSize() > 1) {
             throw invalid_argument(
                 "baseline for speedup has ambiguous configuration");
           } else {
-            baseline = geomeans.flatten()[0];
+            baseline = geomeans.Flatten()[0];
           }
         }
       }
 
-      vector<benchmark_threads_t> threadNums;
-      auto barGrouper = BarGrouper(barPlot);
+      vector<benchmark_threads_t> thread_numbers;
+      auto grouper = BarGrouper(plot);
       for (auto filename : filenames) {
-        auto benchmark = askibench::parseBenchmark(filename);
-        auto tn = benchmark.getNumThreads();
+        auto benchmark = askibench::ParseBenchmark(filename);
+        auto tn = benchmark.GetThreadNumbers();
 
         // Looking for the highest number of bar groups
-        if (tn.size() > threadNums.size()) {
-          threadNums = std::move(tn);
+        if (tn.size() > thread_numbers.size()) {
+          thread_numbers = std::move(tn);
         }
 
         Benchmark data;
         if (args.count("speedup")) {
-          data = benchmark.speedups(baseline).geomeans();
+          data = benchmark.Speedups(baseline).Geomeans();
         } else {
-          data = benchmark.medians();
+          data = benchmark.Medians();
         }
-        barGrouper.Add(data.flatten(), benchmark.getName());
+        grouper.Add(data.Flatten(), benchmark.GetName());
       }
 
       // Creating bar group names
-      vector<string> groupNames;
-      for (const auto &x : threadNums) {
-        groupNames.push_back("threads=" + to_string((int)x));
+      vector<string> group_names;
+      for (const auto &x : thread_numbers) {
+        group_names.push_back("threads=" + to_string((int)x));
       }
 
-      barGrouper.SetGroupNames(groupNames).Commit();
-      barPlot.DrawBarLabels(Offset(0, 1)).DrawLegend(NorthEast);
-      cout << barPlot.Serialize();
+      grouper.SetGroupNames(group_names).Commit();
+      plot.DrawBarLabels(Offset(0, 1)).DrawLegend(NorthEast);
+      cout << plot.Serialize();
     }
   } catch (const exception &e) {
     cout << "ERROR: ";
@@ -116,7 +116,7 @@ int main(int argc, char *argv[]) {
   return 0;
 }
 
-void printVersion() {
+void PrintVersion() {
   cout << "askibench version " << to_string(askibench::version.major) << "."
        << to_string(askibench::version.minor) << "."
        << to_string(askibench::version.patch) << " ("
