@@ -41,11 +41,11 @@ Benchmark Benchmark::geomeans() const {
   Benchmark geomeans;
 
   for (const auto &[threads, times] : getData()) {
-    benchmark_time_t accumulator = 1;
+    benchmark_time_t accumulator = 0;
     for (const auto &time : times) {
-      accumulator *= time;
+      accumulator += log10(time);
     }
-    auto geomean = pow(accumulator, 1. / times.size());
+    auto geomean = pow(10., (double)accumulator / (double)times.size());
     geomeans[threads] = {geomean};
   }
   return geomeans;

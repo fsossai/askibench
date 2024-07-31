@@ -60,12 +60,12 @@ int main(int argc, char *argv[]) {
       if (args.count("speedup")) {
         auto file = args["speedup"].as<string>();
         auto benchmark = askibench::parseBenchmark(file);
-        auto medians = benchmark.medians();
-        if (medians.size() > 1) {
+        auto geomeans = benchmark.geomeans();
+        if (geomeans.size() > 1) {
           throw invalid_argument(
               "baseline for speedup has more than one configuration");
         }
-        baseline = medians.flatten()[0];
+        baseline = geomeans.flatten()[0];
       }
 
       vector<benchmark_threads_t> threadNums;
@@ -82,7 +82,6 @@ int main(int argc, char *argv[]) {
         Benchmark data;
         if (args.count("speedup")) {
           data = benchmark.speedups(baseline).geomeans();
-          cout << "\n";
         } else {
           data = benchmark.medians();
         }
