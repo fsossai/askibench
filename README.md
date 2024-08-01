@@ -4,12 +4,12 @@ It relies on [AskiPlot](https://github.com/fsossai/askiplot) to generate the out
 
 ## Installation
 
-To compile:
+To compile only:
 ```
 make
 ```
 To compile and install:
 ```
-make INSTALL_DIR=/some/path
+make install INSTALL_DIR=/some/path
 ```
 
