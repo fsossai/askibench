@@ -21,7 +21,6 @@ int main(int argc, char *argv[]) {
   options.add_options()
     ("W,width","Canvas maximum width. Assuming the width of the current console as default value.", cxxopts::value<int>())
     ("H,height","Canvas maximum width. Assuming the height of the current console as default value.", cxxopts::value<int>())
-    ("b,baseline","Set a baseline", cxxopts::value<string>())
     ("s,speedup","Specify a file to use as a baseline for computing seepdups", cxxopts::value<string>())
     ("v,version","Display software version.")
     ("h,help","Display this help message.")
