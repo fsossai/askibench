@@ -103,7 +103,14 @@ int main(int argc, char *argv[]) {
       }
 
       grouper.SetGroupNames(group_names).Commit();
-      plot.DrawBarLabels(Offset(0, 1)).DrawLegend(NorthEast);
+      plot.DrawBarLabels(Offset(0, 1));
+
+      if (args.count("speedup")) {
+        plot.DrawLegend(NorthWest);
+      } else {
+        plot.DrawLegend(NorthEast);
+      }
+
       cout << plot.Serialize();
     }
   } catch (const exception &e) {
