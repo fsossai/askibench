@@ -13,6 +13,37 @@ To compile and install:
 make install INSTALL_DIR=/some/path
 ```
 
+## Input format
+
+AskiBench requires inputs to be CSV files with two headers: `threads` and `time`.
+For example, this is the content of `version1.csv` used to generate the plots on this readme.
+```
+cat version1.csv
+```
+```
+threads,time
+1,15865.5
+1,15854.9
+1,16054.6
+1,15971.4
+1,15998.1
+2,10612.9
+2,10820.1
+2,10687
+2,10492.1
+2,10270.4
+4,6282.92
+4,6255.56
+4,6215.73
+4,6307.35
+4,6231.09
+8,4010.53
+8,3944.6
+8,3973.14
+8,3978.65
+8,3985.16
+```
+
 ## Example
 
 In case of thread configurations with many runs, the median is used.
@@ -102,34 +133,3 @@ _____________________________________________ AskiBench ________________________
 <___ threads=1 __>         <___ threads=2 __>         <___ threads=4 __>         <___ threads=8 __>
 ```
 
-
-## Input format
-
-AskiBench requires inputs to be CSV files with two headers: `threads` and `time`.
-For example, this is the content of `version1.csv` used to generate the plots on this readme.
-```
-cat version1.csv
-```
-```
-threads,time
-1,15865.5
-1,15854.9
-1,16054.6
-1,15971.4
-1,15998.1
-2,10612.9
-2,10820.1
-2,10687
-2,10492.1
-2,10270.4
-4,6282.92
-4,6255.56
-4,6215.73
-4,6307.35
-4,6231.09
-8,4010.53
-8,3944.6
-8,3973.14
-8,3978.65
-8,3985.16
-```
