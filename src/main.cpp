@@ -33,7 +33,7 @@ int main(int argc, char *argv[]) {
     if (args.count("speedup")) {
       askiplot::BarValuePrecision = 2;
     }
-    if (args.count("help")) {
+    if (args.count("help") || argc == 1) {
       cout << options.help() << endl;
       return 0;
     }
