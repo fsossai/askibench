@@ -22,6 +22,7 @@ int main(int argc, char *argv[]) {
     ("W,width","Canvas maximum width. Assuming the width of the current console as default value.", cxxopts::value<int>())
     ("H,height","Canvas maximum width. Assuming the height of the current console as default value.", cxxopts::value<int>())
     ("s,speedup","Specify a file to use as a baseline for computing seepdups", cxxopts::value<string>())
+    ("l,hide-legend","Hide legend")
     ("v,version","Display software version.")
     ("h,help","Display this help message.")
   ;
@@ -105,10 +106,12 @@ int main(int argc, char *argv[]) {
       grouper.SetGroupNames(group_names).Commit();
       plot.DrawBarLabels(Offset(0, 1));
 
-      if (args.count("speedup")) {
-        plot.DrawLegend(NorthWest);
-      } else {
-        plot.DrawLegend(NorthEast);
+      if (args.count("hide-legend") == 0) {
+        if (args.count("speedup")) {
+          plot.DrawLegend(NorthWest);
+        } else {
+          plot.DrawLegend(NorthEast);
+        }
       }
 
       cout << plot.Serialize();
