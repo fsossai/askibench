@@ -21,7 +21,7 @@ int main(int argc, char *argv[]) {
   options.add_options()
     ("W,width","Canvas maximum width. Assuming the width of the current console as default value.", cxxopts::value<int>())
     ("H,height","Canvas maximum width. Assuming the height of the current console as default value.", cxxopts::value<int>())
-    ("s,speedup","Specify a file to use as a baseline for computing seepdups", cxxopts::value<string>())
+    ("b,baseline","Specify a file to use as a baseline for computing seepdups", cxxopts::value<string>())
     ("l,hide-legend","Hide legend")
     ("v,version","Display software version.")
     ("h,help","Display this help message.")
@@ -31,7 +31,7 @@ int main(int argc, char *argv[]) {
   try {
     auto args = options.parse(argc, argv);
     askiplot::BarValuePrecision = 0;
-    if (args.count("speedup")) {
+    if (args.count("baseline")) {
       askiplot::BarValuePrecision = 2;
     }
     if (args.count("help") || argc == 1) {
@@ -57,8 +57,8 @@ int main(int argc, char *argv[]) {
       plot.DrawBorders(Top).SetTitle(" AskiBench ").DrawTitle();
 
       benchmark_time_t baseline;
-      if (args.count("speedup")) {
-        auto file = args["speedup"].as<string>();
+      if (args.count("baseline")) {
+        auto file = args["baseline"].as<string>();
         auto benchmark = askibench::ParseBenchmark(file);
         auto geomeans = benchmark.Geomeans();
 
@@ -89,7 +89,7 @@ int main(int argc, char *argv[]) {
         }
 
         Benchmark data;
-        if (args.count("speedup")) {
+        if (args.count("baseline")) {
           data = benchmark.Speedups(baseline).Geomeans();
         } else {
           data = benchmark.Medians();
@@ -107,7 +107,7 @@ int main(int argc, char *argv[]) {
       plot.DrawBarLabels(Offset(0, 1));
 
       if (args.count("hide-legend") == 0) {
-        if (args.count("speedup")) {
+        if (args.count("baseline")) {
           plot.DrawLegend(NorthWest);
         } else {
           plot.DrawLegend(NorthEast);
