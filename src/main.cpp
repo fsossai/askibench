@@ -70,7 +70,7 @@ int main(int argc, char *argv[]) {
         } else {
           if (geomeans.GetSize() > 1) {
             throw invalid_argument(
-                "baseline for speedup has ambiguous configuration");
+                "missing execution for threads=1");
           } else {
             baseline = geomeans.Flatten()[0];
           }
