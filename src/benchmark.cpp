@@ -61,6 +61,18 @@ Benchmark Benchmark::Speedups(benchmark_time_t baseline) const {
   return speedup;
 }
 
+Benchmark Benchmark::Speedups(const Benchmark& baseline) const {
+  Benchmark speedup;
+  auto geomean = baseline.Geomeans();
+  for (const auto &[threads, times] : GetData()) {
+    auto rbaseline = baseline[threads];
+    for (const auto &time : times) {
+      speedup[threads].push_back(geomean[threads][0] / time);
+    }
+  }
+  return speedup;
+}
+
 vector<benchmark_threads_t> Benchmark::GetThreadNumbers() const {
   vector<benchmark_threads_t> thread_nums;
   for (const auto &[threads, _] : GetData()) {

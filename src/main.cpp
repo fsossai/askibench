@@ -23,6 +23,7 @@ int main(int argc, char *argv[]) {
     ("H,height","Canvas maximum width. Assuming the height of the current console as default value.", cxxopts::value<int>())
     ("b,baseline","Specify a file to use as a baseline for computing seepdups", cxxopts::value<string>())
     ("l,hide-legend","Hide legend")
+    ("r,relative","Speedup is computed w.r.t. each group")
     ("v,version","Display software version.")
     ("h,help","Display this help message.")
   ;
@@ -56,24 +57,17 @@ int main(int argc, char *argv[]) {
       BarPlot plot(plot_width, plot_height);
       plot.DrawBorders(Top).SetTitle(" AskiBench ").DrawTitle();
 
-      benchmark_time_t baseline;
+      Benchmark baseline;
+      benchmark_time_t baseline_sequential_time;
       if (args.count("baseline")) {
         auto file = args["baseline"].as<string>();
-        auto benchmark = askibench::ParseBenchmark(file);
-        auto geomeans = benchmark.Geomeans();
+        baseline = askibench::ParseBenchmark(file);
 
-        // Finding a baseline.
-        // The provided file must contain either the threads=1 configuration
-        // or a unique configuration
-        if (geomeans.Contains(1)) {
-          baseline = geomeans[1][0];
-        } else {
-          if (geomeans.GetSize() > 1) {
-            throw invalid_argument(
-                "missing execution for threads=1");
-          } else {
-            baseline = geomeans.Flatten()[0];
+        if (!args.count("relative")) {
+          if (!baseline.Contains(1)) {
+            throw invalid_argument("missing execution for threads=1");
           }
+          baseline_sequential_time = baseline.Geomeans()[1][0];
         }
       }
 
@@ -90,11 +84,15 @@ int main(int argc, char *argv[]) {
 
         Benchmark data;
         if (args.count("baseline")) {
-          data = benchmark.Speedups(baseline).Geomeans();
+          if (args.count("relative")) {
+            data = benchmark.Speedups(baseline).Geomeans();
+          } else {
+            data = benchmark.Speedups(baseline_sequential_time).Geomeans();
+          }
         } else {
           data = benchmark.Medians();
         }
-        grouper.Add(data.Flatten(), benchmark.GetName());
+        grouper.Add(data.Flatten(), Scaling::Scaled, benchmark.GetName());
       }
 
       // Creating bar group names
